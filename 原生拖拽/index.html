@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+      *{
+          margin: 0;
+          padding: 0;
+      }
+ 
+      .app{
+          width: 790px;
+          height: 475px;
+          border: 1px solid #ccc;
+          margin: 100px auto 0;
+          position: relative;
+      }
+      .app>ul{
+         width: 100%;
+         height: 100%;
+         
+      }
+      .app ul li{
+          list-style: none;
+          float: left;
+          margin-top: 10px;
+          margin-left: 10px;
+      }
+      .app li img{
+        width: 250px;
+        height: 140px;  
+        border-radius: 10px;
+      }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <ul>
+            <li>
+                <img src="./img/1.jpg" alt="" class="src">
+            </li>
+            <li>
+                <img src="./img/2.jpg" alt="" class="src">
+            </li>
+            <li>
+                <img src="./img/3.jpg" alt="" class="src">
+            </li>
+            <li>
+                <img src="./img/4.jpg" alt="" class="src">
+            </li>
+            <li>
+                <img src="./img/5.jpg" alt="" class="src">
+            </li>
+            <li>
+                <img src="./img/6.jpg" alt="" class="src">
+            </li>
+            <li>
+                <img src="./img/7.jpg" alt="" class="src">
+            </li>
+            <li>
+                <img src="./img/8.jpg" alt="" class="src">
+            </li>
+            <li>
+                <img src="./img/9.jpg" alt="" class="src">
+            </li>
+        </ul>
+    </div>
+</body>
+</html>
+
+<script>
+   var aLi = document.querySelectorAll('li')
+   var liPs = []
+   var odiv = document.querySelector('.app')
+
+
+   for(let i=0,len = aLi.length;i<len;i++){ //这里会有作用域的问题
+        liPs.push([aLi[i].offsetLeft,aLi[i].offsetTop])
+     
+        setTimeout(function(){ //使用一个延迟函数，让liPs先push完才能拿到
+            aLi[i].style.position = 'absolute';
+            aLi[i].style.left = liPs[i][0] + "px";
+            aLi[i].style.top = liPs[i][1] + "px";
+            aLi[i].style.margin = 0;
+        }, 0);
+   }
+
+//    for(var j=0;j<len;j++){
+//      aLi[j].style.position = 'absolute';
+//      aLi[j].style.left = liPs[j][0] + "px";
+//      aLi[j].style.top = liPs[j][1] + "px";
+//    }
+   
+   //这里要使用事件分流，这里不是为运行，而是方便维护
+   
+    odiv.addEventListener('mousedown',drap);
+    document.addEventListener('mousemove',drap);
+    document.addEventListener('mouseup',drap);
+    var onoff = false;
+    var ele = null;//保存点击的元素
+    var startX,startY;//点击的x，y坐标
+    var x1,y1;
+    var zIndex = 1;
+
+    function drap(ev){
+        ev.preventDefault();//去除浏览器的默认事件
+     switch(ev.type){//事件分流用switch
+        case 'mousedown':
+          //console.log(ev.target.parentNode.tagName === 'LI')
+          if(ev.target.parentNode.tagName === 'LI'){
+             onoff = true;
+             ele = ev.target.parentNode
+             //获取元素的位置
+             startX = ele.offsetLeft; //做偏移量
+             startY = ele.offsetTop;
+             //获取鼠标点击位置
+             x1 = ev.clientX;
+             y1 = ev.clientY;
+             ele.style.zIndex  = zIndex++;
+
+          }
+        break;
+        case 'mousemove': //事件节流
+        if(onoff){
+            //获取移动的新位置
+            var x2 = ev.clientX;
+            var y2 = ev.clientY;
+            //计算移动的距离
+            var nowX = startX + x2 -x1;
+            var nowY = startY + y2 -y1;
+            //设置元素的新位置
+            ele.style.left = nowX + 'px';
+            ele.style.top = nowY + 'px';
+            //求出相对位置
+            var xr = x2 - odiv.offsetLeft;
+            var yr = y2 = odiv.offsetTop;
+            
+            for(let i=0,len = aLi.length;i<len;i++){
+                aLi[i].style.transform = ''
+               if(aLi[i] !=ele&&xr>aLi[i].offsetLeft&&xr<aLi[i].offsetLeft+250&&yr>aLi[i].offsetTop&&yr<aLi[i].offsetTop+140){
+                  aLi[i].style.transform = 'scale(1.05)'
+
+               }
+            }
+        }
+        break;
+        case 'mouseup':
+        onoff = false
+        break;
+     }
+
+    }
+   
+
+</script>

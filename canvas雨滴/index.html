@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+			.rain{background:rgb(0,0,0)}
+		</style>
+	</head>
+	<body>
+		<canvas class="rain"></canvas>
+	</body>
+</html>
+
+<script>
+	
+	//了解arguments是很么，callee、caller是什么，看下面函数 利用instanceof判断
+//	~~function(){
+//		console.log('arguments instanceof Array?'+ (arguments instanceof Array))
+//		console.log('arguments instanceof Object?' + (arguments instanceof Object))
+//		console.log(arguments)
+//	}()
+    //arguents.callee指向的四一个函数对象
+//  function obj(){
+//  	console.log(arguments.callee)  是个像数组的对象
+//  }
+//	obj()
+     
+      //child是parent内的函数，并在parent内执行child
+//    (function parent(){
+//      function child(){
+//        //这里child的父函数就是parent
+//        console.log( child.caller );  // 指向parent（）
+//      }
+//      child();
+//    })()
+//    //parent1没有被别人调用
+//    function parent1(){
+//      //这里parent1没有父函数
+//      console.log(parent1.caller);  //没有父函数 为null
+//    }
+//    //parent2调用了child2
+//    function parent2(){
+//      child2();
+//    }
+//    function child2(){
+//      console.log(child2.caller);  // caller指向的是父函数   parent2
+//    }
+//    /*执行
+//     parent里嵌套了child函数
+//     parent1没有嵌套函数
+//     parent2调用了child2，child2不是嵌套在parent2里的函数
+//    */
+//   parent()
+//   parent1()
+//   parent2()
+	
+	/*
+	  1.获取cnavas元素 DOM
+	  2.获取浏览器的宽高BOM
+	  3.给canvas元素设置上去
+	  4.当浏览器宽高发生变化时重新获取宽高并重新给canvas设置上去BOM
+	
+	2.如何利用canvas绘制一个图形
+	3.如何利用canvas绘制动态
+	4.画一个雨滴效果
+	   每隔60/1秒就画一个矩形
+	   每画完一个矩形区域就往矩形区域套一个透明图层
+	5.画雨滴
+	  1.下落位置
+	  2.下降速度
+	  3.绽放的位置不同
+	  4.绽放雨滴的大小不同
+	*/
+	var ocanvas  =document.querySelector('.rain');
+	var w ,h;
+	var arain = []; //定义一个全局变量，用来存放小雨滴，因为canvas画的图形找不到
+	//将canvas的宽高跟浏览器的宽高等同起来
+	(function(){
+		window.onresize = arguments.callee;  //arguments.callee是个函数
+		w = window.innerWidth;
+		h = window.innerHeight;
+		ocanvas.width = w;
+		ocanvas.height = h;
+	})()
+	
+	var canCon = ocanvas.getContext('2d') //获取图形的区域
+//	canCon.fillStyle = 'red' //canvas里的笔（fill实心笔，stroke空心笔），fillstyle笔的颜色
+//	canCon.arc(233,233,100,0,Math.PI*2); // 绘制圆用的 参数（X,Y,半径，从哪里开始，到哪里结束，）math.pi是个π
+//	canCon.fill() // 下笔作画
+	
+//canCon.strokeRect() //绘制矩形
+
+   // var y = 0,
+     //   r = 0;
+    //setInterval(function(){
+    	/*测试   画动画效果
+    	canCon.beginPath() //吧笔给抬起来
+    	canCon.clearRect(0,0,w,h) // 清除帧动画前面的的部分从浏览器的0,0开始
+    	canCon.strokeStyle = 'red';
+    	canCon.arc(100,y++,100,0,Math.PI*2)
+    	canCon.stroke();*/
+    	
+    	/*雨滴
+    	canCon.fillStyle = 'rgba(0,0,0,0.02)';
+    	canCon.fillRect(0,0,w,h);
+    	canCon.beginPath()
+    	canCon.fillStyle = '#33ffff'; // 雨滴颜色
+    	canCon.fillRect(50,y++,2,10)//绘制雨滴
+    	*/
+    	
+    	/*画圆
+    	canCon.fillStyle = 'rgba(0,0,0,0.02)';
+    	canCon.fillRect(0,0,w,h)
+    	canCon.beginPath()
+    	canCon.strokeStyle = '#3ff';
+    	canCon.arc(100,100,r++,0,Math.PI*2)
+    	canCon.stroke()
+    	*/   	
+   // },1000/60)
+	
+	//面向对象编程，构造函数
+	
+	function random(min,max){
+		return Math.random()*(max-min)+min //2*（4-2）+2
+	}
+	
+	function Rain(){ }//构造函数
+	//Rain的原型对象
+	Rain.prototype = {
+		init:function(){ //雨滴基本参数
+			this.x = random(0,w); //雨滴的X坐标
+			this.y = random(0,300) //Y
+			this.w = random(1.5,2.5); //雨滴宽度
+			this.h = random(8,12); //雨滴高度
+			this.color = 'pink' //雨滴颜色
+			this.vy = random(1,2) //雨滴下降的速度
+			this.vr = random(0.5,1.5) //雨滴绽放的速度
+			this.a = 1;
+			this.va = 0.96
+			this.ground = random(0.8*h,0.9*h)
+			this.r = random(10,20);
+		},
+		draw:function(){
+			if(this.y<this.ground){  //判断底面的高度
+				canCon.beginPath();
+			    canCon.fillStyle = this.color;
+			    canCon.fillRect(this.x,this.y,this.w,this.h)
+			}else{
+				canCon.beginPath();
+				canCon.strokeStyle = this.color;
+				canCon.arc(this.x,this.y,this.r,0,Math.PI*2)
+				canCon.stroke()
+			}
+			
+		},
+		move:function(){
+			if(this.y<this.ground){
+				this.y+=this.vy; //函数靠y来移动
+			}else{
+				if(this.r<100){
+					this.r++
+					if(this.r>50){
+						this.a+=this.va
+					}
+				}else{
+					this.init()
+				}
+			}
+			this.draw();
+		}
+		
+	}
+	//rain是通过Rain new踹的一个实例对象
+	
+	
+	function createRain(num){
+		for(let i=0;i<num;i++){
+			setTimeout(function(){
+				var rain = new  Rain()  //创建一个实例对象，并调用原型上的方法
+	            rain.init()
+	            rain.draw()
+	            arain.push(rain)
+			},200*i)
+		}
+	}
+	createRain(66)
+	
+	setInterval(function(){
+		canCon.fillStyle = 'rgba(0,0,0,0.03)'; //遮盖层
+		canCon.fillRect(0,0,w,h) //矩形，从0,0开始到浏览器的宽高位置结束
+		for(let prop of arain){ //循环并执行每个雨滴的move方法
+		   prop.move()
+		}
+	},1000/60)
+</script>

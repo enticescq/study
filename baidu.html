@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			#nn{width: 300px; height: 50px; padding: 5px; border: 1px solid pink;font-size: 26px;background: lightgray;}
+			#uu{width:310px;margin: 0;padding: 0;display: none;}
+			#uu li a{line-height: 30px;padding: 5px;text-decoration: none;display: block;}
+			#uu li a:hover{color: white;background: orange;}
+		</style>
+	</head>
+	<body>
+		
+		<input type="text" id="nn">
+		<ul id="uu">
+			
+		</ul>
+	</body>
+</html>
+
+<script>
+	//json ֻ只能去拿格式为函数调用的数据格式
+	var uu = document.getElementById('uu');
+	var nn = document.getElementById('nn');
+    var li = document.getElementsByTagName('li');
+	//onkeyup鼠标离开事件
+	
+	nn.onkeyup = function(){
+		var oscript = document.createElement('script')
+		oscript.src = "https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd="+this.value+"&json=1&p=3&sid=1446_21121_26350_20930&req=2&csor=1&cb=fn"
+		document.body.appendChild(oscript)
+		document.body.removeChild(oscript)
+	}
+
+
+   function fn(data){
+     var html = '';
+     if(data.s.length){
+     uu.style.display = 'block';
+     for(var i = 0;i<data.s.length;i++){
+    html += '<li><a href="https://www.baidu.com/s?wd='+data.s[i]+'">'+data.s[i]+'</a></li>'
+         
+}
+
+uu.innerHTML = html;
+}else{
+uu.style.display = 'none';
+
+}
+   
+}
+
+
+	
+</script>
+

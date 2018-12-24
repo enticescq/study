@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    *{
+            margin: 0;
+            padding: 0;
+    }
+     canvas{
+        
+         display: block;
+     }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+</body>
+</html>
+
+<script>
+   var oCanvas = document.querySelector('#canvas')
+   var w,h; 
+   var aColor = ["#C7FFEC","#00FF80","#00FF80","#FFA07B","#00EBC0","#BF0A10","#16110B"]
+   var aBubble = []
+
+   ~~function(){
+
+      window.onresize = arguments.callee;
+      w = window.innerWidth;
+      h = window.innerHeight;
+
+      oCanvas.width = w;
+      oCanvas.height = h;
+   }()
+   
+   var ctx = oCanvas.getContext('2d');
+  
+//    var y = 200;
+//    setInterval(function(){
+//         ctx.beginPath()
+//         ctx.clearRect(0,0,w,h) //从左上角开始，清除全部的浏览器区域
+//         ctx.fillStyle = 'red'; //画圆
+//         ctx.arc(200,y++,50,0,Math.PI * 2,true)
+//         ctx.fill()
+//    },1000/60)
+   
+   /*需求：500个圆
+       1.速度不一样
+       2.位置不一样
+       3.大小不一样
+       4.方向不一样
+       5.颜色不一样
+    用面向对象编程   
+   */
+   
+   function Random(min,max){
+       return Math.random() * (max-min) + min
+   }
+   
+   //console.log(aColor[Math.floor(Random(0,7))])
+
+   function Bubble(){};
+   Bubble.prototype = {
+       init:function(){
+           this.x = Random(0,w) //圆的X坐标
+           this.y = Random(0,h) //圆的Y坐标
+           this.r = Random(1,3) //圆的半径
+           this.color = aColor[Math.floor(Random(0,7))] //颜色
+           //设置运动速度
+           this.vx = Random(-1,1)
+           this.vy = Random(-1,1)
+       },
+       draw:function(){
+           ctx.beginPath();
+           //ctx.clearRect(0,0,w,h); //这里就不能清理了
+           ctx.fillStyle =  this.color;
+           //console.log(this.color)
+           ctx.arc(this.x,this.y,this.r,0,Math.PI *2 );
+           ctx.fill()
+       },
+       move:function(){
+           this.x+=this.vx;
+           this.y+=this.vy;
+           if(this.x-this.r<0||this.x + this.r > w){
+               this.vx = -this.vx
+           }
+           if(this.y-this.r<0||this.y + this.r >h){
+               this.vy = -this.vy
+           }
+           this.draw()
+       }
+   }
+   
+   
+   
+   function crateBubble(num){
+       for(var i=0;i<num;i++){
+          var bubble = new Bubble()
+          bubble.init()
+          bubble.draw()
+          aBubble.push(bubble)//存取所有的对象，包括他们的方法
+       }
+   }
+   crateBubble(500)
+ 
+    setInterval(function(){
+        ctx.clearRect(0,0,w,h);
+        for(let item of aBubble ){ //可以遍历出属性跟方法
+            item.move()
+        }
+    },1000/60)
+</script>
