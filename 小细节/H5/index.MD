@@ -1,0 +1,10 @@
+1.
+```bash
+background-attachment:fixed;
+可以固定背景图,相对于固定位置，不受滚动条的影响
+```
+2.
+```
+background-size:cover;
+背景宽度的一个自适应
+```
