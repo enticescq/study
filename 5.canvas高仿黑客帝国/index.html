@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            overflow: hidden;
+        }
+      #canvas{
+         background:black;
+      }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas"></canvas>
+</body>
+</html>
+
+<script>
+
+   window.onresize = function(){
+    init()
+   }
+   
+
+   function init(){
+   var yPositions = Array(200).join(0).split(''); //生成一个数组
+    
+    
+   var can = document.getElementById('canvas')
+   var ctx = can.getContext('2d')
+   var w = window.innerWidth;
+   var h = window.innerHeight;
+   can.width = w;
+   can.height = h;
+
+            var draw = function () {
+                ctx.fillStyle = 'rgba(0,0,0,.05)'; //填充颜色
+                ctx.fillRect(0, 0, w, h); //画一个矩形
+                ctx.fillStyle = 'green'; //字体颜色
+                ctx.font = '15px Georgia'; //字体大小 字体规格
+
+                yPositions.map(function (y, index) {
+                    //text = String.fromCharCode(1e2 + Math.random() * 33);　　//这是随机字母
+                    text = parseInt(Math.random() * 2); // 0-1 取整
+                    x = (index * 10) + 10;
+                    
+                    ctx.fillText(text, x, y);
+                    if (y > Math.random() * 1e4) {
+                        yPositions[index] = 0;
+                    } else {
+                        yPositions[index] = y + 20;
+                    }
+                });
+            };
+
+            
+            setInterval(draw, 50);
+   }
+  
+   init()
+
+//    var yPositions = Array(300).join(0).split('');
+
+//    yPositions.map(function (y, index){
+//        console.log(y) //遍历的值
+//        console.log(index) //下标
+//    })
+</script>
